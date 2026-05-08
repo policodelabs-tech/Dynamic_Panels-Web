@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamic Panels | Sistema de Gestión</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div id="authScreen">
+  <div class="auth-left">
+    <div class="auth-left-content">
+      <div class="auth-logo-wrap">
+        <img src="logo-v2.jpeg" alt="Dynamic Panels Logo" style="max-width:280px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); border-radius: 8px;">
+      </div>
+      
+      <div id="authCarousel" class="auth-carousel">
+        <div class="carousel-slide active">
+          <p class="auth-tagline">Gestión inteligente para negocios que se mueven.</p>
+          <p class="auth-sub">Controla tu flota, pedidos, inventario y equipo desde un solo panel centralizado.</p>
+        </div>
+        <div class="carousel-slide">
+          <p class="auth-tagline">Monitoreo en tiempo real.</p>
+          <p class="auth-sub">Sigue cada entrega con nuestro mapa integrado y optimiza tus rutas.</p>
+        </div>
+        <div class="carousel-slide">
+          <p class="auth-tagline">Control total de tu inventario.</p>
+          <p class="auth-sub">Visualiza niveles críticos y administra tus recursos sin complicaciones.</p>
+        </div>
+      </div>
+
+      <div class="auth-dots" id="authDots">
+        <span class="active" onclick="setSlide(0)"></span>
+        <span onclick="setSlide(1)"></span>
+        <span onclick="setSlide(2)"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-box">
+      <div class="auth-tabs">
+        <div class="auth-tab active" onclick="showAuthTab('login')">Iniciar sesión</div>
+        <div class="auth-tab" onclick="showAuthTab('register')">Crear cuenta</div>
+      </div>
+
+      <div class="auth-form active" id="formLogin">
+        <h2 class="auth-form-title">Bienvenido de nuevo</h2>
+        <p class="auth-form-sub">Ingresa tus credenciales para continuar</p>
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input class="form-input" id="loginEmail" type="email" placeholder="nombre@empresa.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input class="form-input" id="loginPass" type="password" placeholder="••••••••" />
+        </div>
+        <div id="loginError" class="form-error hidden"></div>
+        <button class="btn btn-primary btn-block btn-lg" style="margin-top:8px" onclick="doLogin()">
+          Iniciar sesión
+        </button>
+      </div>
+
+      <div class="auth-form" id="formRegister">
+        <h2 class="auth-form-title">Crear cuenta</h2>
+        <p class="auth-form-sub">Completa tus datos para empezar</p>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Nombre(s)</label><input class="form-input" id="regNombre" /></div>
+          <div class="form-group"><label class="form-label">Apellidos</label><input class="form-input" id="regApellidos" /></div>
+        </div>
+        <div class="form-group"><label class="form-label">Correo electrónico</label><input class="form-input" id="regEmail" type="email" /></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Contraseña</label><input class="form-input" id="regPass" type="password" /></div>
+          <div class="form-group"><label class="form-label">Confirmar</label><input class="form-input" id="regPass2" type="password" /></div>
+        </div>
+        <div id="regError" class="form-error hidden"></div>
+        <button class="btn btn-primary btn-block btn-lg" style="margin-top:8px" onclick="doRegister()">
+          Crear cuenta
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="negociosScreen" class="hidden">
+  <header class="negocios-header">
+    <div class="negocios-logo">
+      <img id="negociosTopLogo" src="logo-v1.jpeg" alt="Dynamic Panels" style="max-height: 32px; border-radius: 4px;">
+    </div>
+    <div class="negocios-user">
+      <div>
+        <div class="negocios-user-name" id="negUserName">Cargando...</div>
+        <div class="negocios-user-email" id="negUserEmail"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <div class="negocios-content">
+    <h1 class="negocios-title">Mis Negocios</h1>
+    <p class="negocios-subtitle">Selecciona un negocio para entrar al panel de gestión</p>
+
+    <div class="negocios-actions">
+      <button class="btn btn-primary" onclick="openModal('modalCrearNegocio')">🏢 Crear negocio</button>
+      <button class="btn btn-ghost" onclick="openModal('modalUnirseNegocio')">🔗 Unirme con código</button>
+    </div>
+
+    <div class="negocios-grid" id="negociosGrid">
+      <div class="negocio-empty">
+        <div class="negocio-empty-icon">🏪</div>
+        <h3>Aún no tienes negocios</h3>
+        <p>Crea uno nuevo o únete con un código de invitación</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="appScreen" class="hidden">
+
+  <header class="top-navbar">
+    <div class="navbar-brand">
+      <img src="isologo.png" alt="Icono DP" style="max-height: 30px; object-fit: contain;" onerror="this.src='https://via.placeholder.com/30?text=DP'">
+    </div>
+
+    <div class="navbar-sep"></div>
+
+    <button class="navbar-biz" onclick="goToNegocios()" title="Cambiar negocio">
+      <img id="navBizLogoImg" src="" alt="Biz" style="width:20px;height:20px;border-radius:4px;object-fit:cover;display:none;">
+      <span class="navbar-biz-name" id="navBizName">Negocio</span> ▾
+    </button>
+
+    <nav class="navbar-menu" id="navMenu">
+      <button class="nav-item active" data-view="dashboard">📊 Dashboard</button>
+      <button class="nav-item" data-view="pedidos">📦 Pedidos <span class="nav-badge hidden" id="navBadgePedidos">0</span></button>
+      <button class="nav-item" data-view="flota">🗺️ Flota <span class="nav-live">●</span></button>
+      <button class="nav-item" data-view="personal">👥 Personal</button>
+      <button class="nav-item" data-view="inventario">🧱 Inventario</button>
+      <button class="nav-item" data-view="metricas">📈 Métricas</button>
+      <button class="nav-item" data-view="reportes">📑 Reportes</button>
+      <button class="nav-item" data-view="config">⚙️ Config</button>
+    </nav>
+
+    <div class="navbar-right">
+      <input class="search-box" type="text" placeholder="Buscar…" id="globalSearch" oninput="globalSearchFn()" />
+      <button class="icon-btn" onclick="toggleDark()" id="darkBtn" title="Modo oscuro">🌙</button>
+      <div class="profile-btn" onclick="openModal('modalProfile')">
+        <img id="navAvatarImg" src="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;display:none;">
+        <div class="profile-avatar" id="profileAvatarText">AD</div>
+        <div>
+          <div class="profile-name" id="profileName">Admin</div>
+          <div class="profile-role" id="profileRole">Administrador</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content-area">
+
+    <section class="view active" id="view-dashboard">
+      <div class="view-header">
+        <div>
+          <h1 class="view-title">Dashboard Central</h1>
+          <p class="view-subtitle" id="todayLabel"></p>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card rose">
+          <div class="kpi-header"><span class="kpi-label">Pedidos hoy</span><div class="kpi-icon rose">📦</div></div>
+          <div class="kpi-value" id="kpiPedidos">0</div>
+        </div>
+        <div class="kpi-card orange">
+          <div class="kpi-header"><span class="kpi-label">Ventas del día</span><div class="kpi-icon orange">💰</div></div>
+          <div class="kpi-value" id="kpiVentas">$0.00</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-header"><span class="kpi-label">Empleados activos</span><div class="kpi-icon blue">👥</div></div>
+          <div class="kpi-value" id="kpiEmpleados">0</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-header"><span class="kpi-label">Tasa de entrega</span><div class="kpi-icon green">📈</div></div>
+          <div class="kpi-value" id="kpiTasa">—</div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="card full mb">
+          <div class="card-header">
+            <span class="card-title">Pedidos Recientes</span>
+            <button class="btn btn-ghost btn-sm" onclick="switchView('pedidos')">Ver todos →</button>
+          </div>
+          <div class="card-body p0 dash-card-scroll" id="dashOrdersWrap"></div>
+        </div>
+
+        <div class="card mb">
+          <div class="card-header"><span class="card-title">Actividad Reciente</span></div>
+          <div class="card-body dash-card-scroll" id="dashActivity"></div>
+        </div>
+
+        <div class="card mb">
+          <div class="card-header">
+            <span class="card-title">Objetivos del Día</span>
+            <button class="btn btn-ghost btn-sm" id="btnNuevaTarea" onclick="openModal('modalNuevaTarea')">+ Nueva</button>
+          </div>
+          <div class="card-body dash-card-scroll" id="dashTasks"></div>
+        </div>
+
+        <div class="card mb">
+          <div class="card-header"><span class="card-title">Repartidores en Campo</span></div>
+          <div class="card-body p0" id="dashDrivers"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-pedidos">
+      <div class="view-header">
+        <div><h1 class="view-title">Gestión de Pedidos</h1><p class="view-subtitle">Administra, asigna y rastrea todos los pedidos</p></div>
+        <div class="view-actions">
+          <button class="btn btn-primary" onclick="openModal('modalNuevoPedido')">＋ Nuevo Pedido</button>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <input class="filter-input" type="text" id="searchOrders" placeholder="Buscar por folio o cliente…" oninput="renderOrders()" />
+        <select class="filter-select" id="filterStatus" onchange="renderOrders()">
+          <option value="">Todos los estados</option>
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="EN_CAMINO">En Ruta</option>
+          <option value="ENTREGADO">Entregado</option>
+          <option value="CANCELADO">Cancelado</option>
+        </select>
+        <div class="view-toggle">
+          <button class="vt-btn active" id="btnTable" onclick="setOrderView('table')">TABLA</button>
+          <button class="vt-btn" id="btnBoard" onclick="setOrderView('board')">KANBAN</button>
+        </div>
+      </div>
+      <div id="ordersTableView">
+        <div class="card"><div class="card-body p0" id="ordersTableWrap"></div></div>
+      </div>
+      <div id="ordersBoardView" class="hidden">
+        <div class="kanban-board" id="ordersKanban"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-flota">
+      <div class="view-header">
+        <div><h1 class="view-title">Flota & Radar en Vivo</h1><p class="view-subtitle">Monitorea tus unidades en tiempo real</p></div>
+        <span class="live-chip">GPS Activo</span>
+      </div>
+      <div class="flota-layout">
+        <div class="card map-card">
+          <div id="leafletMap" style="height:100%;width:100%;z-index:1;border-radius:var(--radius-lg);"></div>
+          <div class="map-overlay-chip">GPS Activo</div>
+        </div>
+        <div class="flota-sidebar">
+          <div class="card mb">
+            <div class="card-header">
+              <span class="card-title">Disponibles</span>
+              <span class="nav-badge" style="background:var(--green)" id="cntDisp">0</span>
+            </div>
+            <div class="card-body p0 fleet-list" id="listDisp"></div>
+          </div>
+          <div class="card mb">
+            <div class="card-header">
+              <span class="card-title">En Ruta</span>
+              <span class="nav-badge" style="background:var(--blue)" id="cntRuta">0</span>
+            </div>
+            <div class="card-body p0 fleet-list" id="listRuta"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Inactivos</span>
+              <span class="nav-badge" style="background:var(--muted)" id="cntInact">0</span>
+            </div>
+            <div class="card-body p0 fleet-list" id="listInact"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-personal">
+      <div class="view-header">
+        <div><h1 class="view-title">Personal</h1><p class="view-subtitle">Gestiona tu equipo, roles y permisos</p></div>
+        <div class="view-actions">
+          <button class="btn btn-primary" id="btnNuevoEmp" onclick="openModal('modalNuevoEmpleado')">＋ Invitar / Agregar</button>
+        </div>
+      </div>
+      <div class="personal-tabs">
+        <button class="pers-tab active" onclick="switchPersTab('empleados')">👥 Empleados</button>
+        <button class="pers-tab" onclick="switchPersTab('roles')">🔐 Roles y Permisos</button>
+        <button class="pers-tab" onclick="switchPersTab('tareas')">✅ Objetivos del Día</button>
+      </div>
+
+      <div id="persTabEmpleados">
+        <div class="filter-bar">
+          <input class="filter-input" type="text" id="searchEmp" placeholder="Buscar empleado…" oninput="renderEmployees()" />
+          <select class="filter-select" id="filterRol" onchange="renderEmployees()">
+            <option value="">Todos los roles</option>
+          </select>
+        </div>
+        <div class="emp-grid" id="employeesGrid"></div>
+      </div>
+
+      <div id="persTabRoles" class="hidden">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Matriz de Permisos</span></div>
+          <div class="card-body p0">
+            <table class="data-table">
+              <thead><tr><th>Rol</th><th>Pedidos</th><th>Empleados</th><th>Finanzas</th><th>Inventario</th><th>Métricas</th><th>Repartos</th><th>Config.</th></tr></thead>
+              <tbody id="rolesTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="persTabTareas" class="hidden">
+        <div class="view-actions" style="margin-bottom:16px">
+          <button class="btn btn-primary btn-sm" onclick="openModal('modalNuevaTarea')">＋ Nueva Tarea</button>
+        </div>
+        <div id="taskBoardWrap"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-inventario">
+      <div class="view-header">
+        <div><h1 class="view-title">Inventario</h1><p class="view-subtitle">Control de stock y movimientos</p></div>
+        <div class="view-actions">
+          <button class="btn btn-ghost" onclick="openModal('modalEntradaMerc')">📥 Entrada de mercancía</button>
+          <button class="btn btn-primary" onclick="openModal('modalNuevoProducto')">＋ Nuevo Producto</button>
+        </div>
+      </div>
+      <div class="inv-kpis">
+        <div class="inv-kpi"><div class="inv-kpi-label">Total productos</div><div class="inv-kpi-val" id="invTotal">0</div></div>
+        <div class="inv-kpi"><div class="inv-kpi-label">Stock crítico</div><div class="inv-kpi-val text-red" id="invCritico">0</div></div>
+        <div class="inv-kpi"><div class="inv-kpi-label">Valor total est.</div><div class="inv-kpi-val text-accent" id="invValor">$0</div></div>
+      </div>
+      <div class="card"><div class="card-body p0" id="inventoryWrap"></div></div>
+    </section>
+
+    <section class="view" id="view-metricas">
+      <div class="view-header"><div><h1 class="view-title">Métricas</h1><p class="view-subtitle">Analiza el desempeño de tu negocio</p></div></div>
+      <div class="metrics-grid">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Pedidos por Estado</span></div>
+          <div class="chart-wrap" id="statusChartWrap" style="min-height:200px"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Tiempo Prom. Entrega</span></div>
+          <div class="card-body">
+            <div class="big-stat" id="avgTimeVal">—</div>
+            <div class="big-stat-unit" id="avgTimeUnit"></div>
+            <div class="big-stat-note" id="avgTimeNote">Sin entregas completadas</div>
+          </div>
+        </div>
+      </div>
+      <div class="metrics-row">
+        <div class="card">
+          <div class="card-header"><span class="card-title">Pedidos por Día (sem.)</span></div>
+          <div class="chart-wrap" id="weekChartWrap" style="min-height:160px"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Empleados por Rol</span></div>
+          <div class="chart-wrap" id="rolesChartWrap" style="min-height:160px"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">Stock Crítico</span></div>
+          <div class="chart-wrap" id="stockChartWrap" style="min-height:160px"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-reportes">
+      <div class="view-header"><div><h1 class="view-title">Reportes</h1><p class="view-subtitle">Genera y descarga informes operativos</p></div></div>
+      <div class="reports-grid">
+        <div class="report-card">
+          <div class="rc-icon">📦</div>
+          <div class="rc-title">Reporte de Pedidos</div>
+          <div class="rc-desc">Historial completo con estados, tiempos de entrega y repartidores.</div>
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV('pedidos')">↓ Exportar CSV</button>
+        </div>
+        <div class="report-card">
+          <div class="rc-icon">💰</div>
+          <div class="rc-title">Reporte Financiero</div>
+          <div class="rc-desc">Ventas por día, semana y mes. Totales y promedios.</div>
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV('ventas')">↓ Exportar CSV</button>
+        </div>
+        <div class="report-card">
+          <div class="rc-icon">👥</div>
+          <div class="rc-title">Reporte de Personal</div>
+          <div class="rc-desc">Lista completa de empleados, roles, estatus y datos de contacto.</div>
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV('personal')">↓ Exportar CSV</button>
+        </div>
+        <div class="report-card">
+          <div class="rc-icon">🛵</div>
+          <div class="rc-title">Reporte de Entregas</div>
+          <div class="rc-desc">Tiempos, rutas y eficiencia por repartidor.</div>
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV('entregas')">↓ Exportar CSV</button>
+        </div>
+        <div class="report-card">
+          <div class="rc-icon">🧱</div>
+          <div class="rc-title">Reporte de Inventario</div>
+          <div class="rc-desc">Stock actual, entradas y productos en nivel crítico.</div>
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV('inventario')">↓ Exportar CSV</button>
+        </div>
+        <div class="report-card">
+          <div class="rc-icon">🖨️</div>
+          <div class="rc-title">Imprimir Dashboard</div>
+          <div class="rc-desc">Snapshot del estado actual del sistema listo para impresión.</div>
+          <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Imprimir</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-config">
+      <div class="view-header">
+        <div><h1 class="view-title">Configuración</h1><p class="view-subtitle">Personaliza tu experiencia y ajustes del sistema</p></div>
+        <button class="btn btn-primary" onclick="saveConfig()">Guardar cambios</button>
+      </div>
+      <div class="config-grid">
+        <div class="card mb">
+          <div class="card-header"><span class="card-title">Perfil de usuario</span></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Nombre(s)</label><input class="form-input" id="cfgNombre" /></div>
+              <div class="form-group"><label class="form-label">Apellidos</label><input class="form-input" id="cfgApellidos" /></div>
+            </div>
+            <div class="form-group"><label class="form-label">Foto de perfil</label><input class="form-input" type="file" id="cfgAvatar" accept="image/*" /></div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="cfgTel" /></div>
+              <div class="form-group"><label class="form-label">Biografía</label><input class="form-input" id="cfgBio" placeholder="Ej. Senior Dev" /></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb">
+          <div class="card-header"><span class="card-title">Apariencia</span></div>
+          <div class="card-body">
+            <div class="toggle-row">
+              <div><div class="toggle-label">Modo oscuro</div><div class="toggle-sub">Activa el tema oscuro para reducir fatiga visual</div></div>
+              <label class="toggle-switch"><input type="checkbox" id="toggleDarkCfg" onchange="toggleDark()" /><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Notificaciones sonoras</div><div class="toggle-sub">Reproducir sonido al recibir pedidos</div></div>
+              <label class="toggle-switch"><input type="checkbox" id="toggleSound" /><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb full" id="configBizCard">
+          <div class="card-header"><span class="card-title">Datos del negocio (Solo Admin)</span></div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Nombre del negocio</label><input class="form-input" id="cfgBizName" /></div>
+              <div class="form-group"><label class="form-label">Logo del negocio</label><input class="form-input" type="file" id="cfgBizLogo" accept="image/*" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Correo principal</label><input class="form-input" id="cfgBizEmail" type="email" /></div>
+              <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="cfgBizTel" /></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb full">
+          <div class="card-header"><span class="card-title">Zona de peligro</span></div>
+          <div class="card-body">
+            <button class="btn btn-danger btn-sm" onclick="if(confirm('¿Seguro que deseas reiniciar los datos locales? Esto borrará toda tu información de prueba.')) clearLocalData()">Borrar todos los datos locales y salir</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="modal-backdrop hidden" id="modalCrearNegocio">
+  <div class="modal">
+    <div class="modal-header"><h3 class="modal-title">Crear Negocio</h3><button class="modal-close" onclick="closeModal('modalCrearNegocio')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Nombre del negocio *</label><input class="form-input" id="cnNombre" placeholder="Mi Empresa SA de CV" /></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Correo Electrónico *</label><input class="form-input" id="cnCorreo" type="email" placeholder="contacto@empresa.com" /></div>
+        <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="cnTelefono" type="tel" /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Dirección</label><input class="form-input" id="cnDireccion" /></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ciudad</label><input class="form-input" id="cnCiudad" placeholder="Ciudad de México" /></div>
+        <div class="form-group"><label class="form-label">Logo del Negocio</label><input class="form-input" type="file" id="cnLogo" accept="image/*" /></div>
+      </div>
+      <div id="cnError" class="form-error hidden"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalCrearNegocio')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitCrearNegocio()">Crear negocio</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="modalUnirseNegocio">
+  <div class="modal modal-sm">
+    <div class="modal-header"><h3 class="modal-title">Unirse con código</h3><button class="modal-close" onclick="closeModal('modalUnirseNegocio')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Ingresa el código de invitación que te proporcionó el administrador del negocio.</p>
+      <div class="form-group"><label class="form-label">Código de invitación</label>
+        <input class="form-input" id="unirCodigo" placeholder="DIT-XXXX-XXXX" style="text-align:center;font-size:18px;font-weight:800;letter-spacing:2px;" />
+      </div>
+      <div id="unirError" class="form-error hidden"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalUnirseNegocio')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitUnirseNegocio()">Unirme</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="modalNuevoPedido">
+  <div class="modal">
+    <div class="modal-header"><h3 class="modal-title">Nuevo Pedido</h3><button class="modal-close" onclick="closeModal('modalNuevoPedido')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Nombre del Cliente *</label><input class="form-input" id="npCliente" placeholder="Juan García" /></div>
+      <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="npTelefono" type="tel" placeholder="55-XXXX-XXXX" /></div>
+      <div class="form-group"><label class="form-label">Dirección de entrega *</label><input class="form-input" id="npDireccion" placeholder="Calle, Número, Colonia, Ciudad" /></div>
+      <div class="form-group"><label class="form-label">Descripción del pedido *</label><textarea class="form-input" id="npDescripcion" placeholder="Detalla los productos o servicios del pedido…"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Total ($)</label><input class="form-input" id="npTotal" type="number" min="0" step="0.01" placeholder="0.00" /></div>
+        <div class="form-group"><label class="form-label">Productos del inventario</label>
+          <select class="form-input" id="npProducto">
+            <option value="">Sin producto</option>
+          </select>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--blue);margin-top:-8px;margin-bottom:8px">🤖 El sistema asignará automáticamente al repartidor disponible.</p>
+      <div id="npError" class="form-error hidden"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalNuevoPedido')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitNuevoPedido()">Crear pedido</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="modalEditPedido">
+  <div class="modal modal-sm">
+    <div class="modal-header"><h3 class="modal-title">Pedido <span id="editFolioLabel" style="color:var(--primary)"></span></h3><button class="modal-close" onclick="closeModal('modalEditPedido')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="editPedidoId" />
+      <div class="form-group"><label class="form-label">Estado</label>
+        <select class="form-input" id="editEstatus">
+          <option value="PENDIENTE">⏳ Pendiente</option>
+          <option value="EN_CAMINO">🛵 En Ruta</option>
+          <option value="ENTREGADO">✅ Entregado</option>
+          <option value="CANCELADO">❌ Cancelado</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Repartidor asignado</label>
+        <select class="form-input" id="editRepartidor"><option value="">Auto-asignado</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalEditPedido')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitEditPedido()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="modalNuevoEmpleado">
+  <div class="modal">
+    <div class="modal-header"><h3 class="modal-title">Invitar / Agregar Personal</h3><button class="modal-close" onclick="closeModal('modalNuevoEmpleado')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Asigna los permisos iniciales. Podrás generar un código para que la persona se una a tu negocio.</p>
+      
+      <div class="form-group"><label class="form-label">Correo electrónico (Opcional)</label><input class="form-input" id="neCorreo" type="email" placeholder="Para envío directo" /></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Sueldo mensual ($)</label><input class="form-input" id="neSueldo" type="number" /></div>
+        <div class="form-group"><label class="form-label">Rol *</label>
+          <select class="form-input" id="neRol">
+            <option value="ADMINISTRADOR">Administrador</option>
+            <option value="SUPERVISOR">Supervisor</option>
+            <option value="CAJERO">Cajero</option>
+            <option value="REPARTIDOR" selected>Repartidor</option>
+            <option value="ALMACENISTA">Almacenista</option>
+          </select>
+        </div>
+      </div>
+      
+      <div id="neInviteArea" class="hidden" style="margin-top:16px;background:var(--surface2);padding:16px;border-radius:var(--radius);text-align:center;">
+        <span style="font-size:12px;color:var(--muted);display:block;margin-bottom:8px">Comparte este código con la persona:</span>
+        <strong id="neCodeDisplay" style="font-size:24px;letter-spacing:3px;color:var(--primary)"></strong>
+      </div>
+      <div id="neError" class="form-error hidden"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalNuevoEmpleado')">Cerrar</button>
+      <button class="btn btn-secondary" onclick="generateEmpleadoCode()">Generar Código</button>
+      <button class="btn btn-primary" onclick="submitNuevoEmpleado()">Guardar Empleado</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="modalEditEmpleado">
+  <div class="modal modal-sm">
+    <div class="modal-header"><h3 class="modal-title">Modificar Empleado</h3><button class="modal-close" onclick="closeModal('modalEditEmpleado')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="editEmpId">
+      <p style="font-size:13px; font-weight:700; margin-bottom:16px;" id="editEmpName"></p>
+      <div class="form-group"><label class="form-label">Nuevo Rol</label>
+        <select class="form-input" id="editEmpRol">
+            <option value="ADMINISTRADOR">Administrador</option>
+            <option value="SUPERVISOR">Supervisor</option>
+            <option value="CAJERO">Cajero</option>
+            <option value="REPARTIDOR">Repartidor</option>
+            <option value="ALMACENISTA">Almacenista</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Sueldo mensual ($)</label><input class="form-input" id="editEmpSueldo" type="number" /></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalEditEmpleado')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitEditEmpleado()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="modalNuevaTarea">
+  <div class="modal modal-sm">
+    <div class="modal-header"><h3 class="modal-title">Nueva Tarea</h3><button class="modal-close" onclick="closeModal('modalNuevaTarea')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Título *</label><input class="form-input" id="ntTitulo" /></div>
+      <div class="form-group"><label class="form-label">Descripción</label><textarea class="form-input" id="ntDesc"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Prioridad</label>
+          <select class="form-input" id="ntPrioridad">
+            <option value="baja">🟢 Baja</option>
+            <option value="media" selected>🟡 Media</option>
+            <option value="alta">🔴 Alta</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Asignar a</label>
+          <select class="form-input" id="ntAsignado"><option value="">Sin asignar</option></select>
+        </div>
+      </div>
+      <div id="ntError" class="form-error hidden"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalNuevaTarea')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitNuevaTarea()">Crear tarea</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="modalNuevoProducto">
+  <div class="modal">
+    <div class="modal-header"><h3 class="modal-title">Nuevo Producto</h3><button class="modal-close" onclick="closeModal('modalNuevoProducto')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Nombre *</label><input class="form-input" id="prodNombre" /></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Categoría</label><input class="form-input" id="prodCategoria" placeholder="General" /></div>
+        <div class="form-group"><label class="form-label">Unidad</label><input class="form-input" id="prodUnidad" placeholder="pieza" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Stock inicial</label><input class="form-input" id="prodStock" type="number" min="0" value="0" /></div>
+        <div class="form-group"><label class="form-label">Stock mínimo</label><input class="form-input" id="prodMinimo" type="number" min="0" value="0" /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Precio unitario ($)</label><input class="form-input" id="prodPrecio" type="number" min="0" step="0.01" placeholder="0.00" /></div>
+      <div id="prodError" class="form-error hidden"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalNuevoProducto')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitNuevoProducto()">Agregar producto</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="modalEntradaMerc">
+  <div class="modal modal-sm">
+    <div class="modal-header"><h3 class="modal-title">📥 Entrada de Mercancía</h3><button class="modal-close" onclick="closeModal('modalEntradaMerc')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Producto *</label>
+        <select class="form-input" id="emProducto"><option value="">Seleccionar…</option></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Cantidad a ingresar *</label><input class="form-input" id="emCantidad" type="number" min="1" value="1" /></div>
+        <div class="form-group"><label class="form-label">Proveedor</label><input class="form-input" id="emProveedor" placeholder="Nombre del proveedor" /></div>
+      </div>
+      <div id="emError" class="form-error hidden"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalEntradaMerc')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitEntradaMerc()">Registrar entrada</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="modalProfile">
+  <div class="modal modal-sm">
+    <div class="modal-header"><h3 class="modal-title">Mi Perfil</h3><button class="modal-close" onclick="closeModal('modalProfile')">✕</button></div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:20px">
+        <img id="profileAvatarBig" src="" style="width:72px;height:72px;border-radius:50%;object-fit:cover;display:none;margin:0 auto 12px;">
+        <div class="profile-avatar" id="profileAvatarTextBig" style="width:72px;height:72px;font-size:28px;margin:0 auto 12px"></div>
+        <div style="font-size:18px;font-weight:800" id="profileFullName">Admin</div>
+        <div style="font-size:13px;color:var(--muted)" id="profileEmail">admin@empresa.com</div>
+        <div style="font-size:12px;color:var(--primary);margin-top:6px;font-weight:600" id="profileBio"></div>
+      </div>
+      <div class="divider"></div>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+        <div style="display:flex;justify-content:space-between"><span class="text-muted">Teléfono</span><span id="profileTelTxt" style="font-weight:700"></span></div>
+        <div style="display:flex;justify-content:space-between"><span class="text-muted">Rol</span><span id="profileRolFull" style="font-weight:700"></span></div>
+        <div style="display:flex;justify-content:space-between"><span class="text-muted">Negocio</span><span id="profileBizFull" style="font-weight:700"></span></div>
+      </div>
+      <button class="btn btn-ghost btn-block btn-sm" style="margin-top:20px" onclick="closeModal('modalProfile'); switchView('config')">✏️ Editar Perfil</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

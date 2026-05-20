@@ -330,7 +330,7 @@ async function saveConfig() {
 }
 
 /* ──────────────────────────────────────
-   DATOS DEMO
+   DATOS DEMO (CON LA CORRECCIÓN DE INITIALS)
 ────────────────────────────────────── */
 function seedDemoData() {
   const empData = [
@@ -344,7 +344,7 @@ function seedDemoData() {
     DB.counters.empleado++;
     DB.empleados.push({ id: DB.counters.empleado, ...e, estatus:'activo',
       color: EMP_COLORS[i % EMP_COLORS.length],
-      initials: initials(e.nombre, e.apellidos),
+      initials: (e.nombre[0] + (e.apellidos ? e.apellidos[0] : '')).toUpperCase(),
       lat: CDMX.lat + (Math.random()-.5)*.04, lng: CDMX.lng + (Math.random()-.5)*.04
     });
   });

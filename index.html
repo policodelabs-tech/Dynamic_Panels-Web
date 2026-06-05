@@ -1,724 +1,663 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dynamic Panels | Sistema de Gestión</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Panels | Policode Labs</title>
+    <link rel="icon" type="image/svg+xml" href="Circulo-Dynamic-Panels.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="authScreen">
-  <div class="auth-left">
-    <div class="auth-left-content">
-      <div class="auth-logo-wrap">
-        <img src="logo-v2.jpeg" alt="Dynamic Panels Logo" style="max-width:280px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); border-radius: 8px;">
-      </div>
-      
-      <div id="authCarousel" class="auth-carousel">
-        <div class="carousel-slide active">
-          <p class="auth-tagline">Gestión inteligente para negocios que se mueven.</p>
-          <p class="auth-sub">Controla tu flota, pedidos, inventario y equipo desde un solo panel centralizado.</p>
-        </div>
-        <div class="carousel-slide">
-          <p class="auth-tagline">Monitoreo en tiempo real.</p>
-          <p class="auth-sub">Sigue cada entrega con nuestro mapa integrado y optimiza tus rutas.</p>
-        </div>
-        <div class="carousel-slide">
-          <p class="auth-tagline">Control total de tu inventario.</p>
-          <p class="auth-sub">Visualiza niveles críticos y administra tus recursos sin complicaciones.</p>
-        </div>
-      </div>
-
-      <div class="auth-dots" id="authDots">
-        <span class="active" onclick="setSlide(0)"></span>
-        <span onclick="setSlide(1)"></span>
-        <span onclick="setSlide(2)"></span>
-      </div>
+<!-- ═══ NAVBAR ═══ -->
+<nav class="navbar">
+    <div class="nav-left">
+        <a href="https://policodelabs-tech.github.io/Policodelabs/" target="_blank" class="logo-cuadrado" title="Policode Labs">
+            <img src="Cuadro-Policode-Labs.svg" alt="Policode Labs">
+        </a>
+        <div class="nav-divider"></div>
+        <img src="web-Logo-Dynamic-Panels-v2.svg" alt="Dynamic Panels" class="img-logo-dynamic" id="navbar-logo-dp">
     </div>
-  </div>
-
-  <div class="auth-right">
-    <div class="auth-box">
-      <div class="auth-tabs">
-        <div class="auth-tab active" onclick="showAuthTab('login')">Iniciar sesión</div>
-        <div class="auth-tab" onclick="showAuthTab('register')">Crear cuenta</div>
-      </div>
-
-      <div class="auth-form active" id="formLogin">
-        <h2 class="auth-form-title">Bienvenido de nuevo</h2>
-        <p class="auth-form-sub">Ingresa tus credenciales para continuar</p>
-        <div class="form-group">
-          <label class="form-label">Correo electrónico</label>
-          <input class="form-input" id="loginEmail" type="email" placeholder="nombre@empresa.com" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input class="form-input" id="loginPass" type="password" placeholder="••••••••" />
-        </div>
-        <div id="loginError" class="form-error hidden"></div>
-        <button class="btn btn-primary btn-block btn-lg" style="margin-top:8px" onclick="doLogin()">
-          Iniciar sesión
-        </button>
-      </div>
-
-      <div class="auth-form" id="formRegister">
-        <h2 class="auth-form-title">Crear cuenta</h2>
-        <p class="auth-form-sub">Completa tus datos para empezar</p>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Nombre(s)</label><input class="form-input" id="regNombre" /></div>
-          <div class="form-group"><label class="form-label">Apellidos</label><input class="form-input" id="regApellidos" /></div>
-        </div>
-        <div class="form-group"><label class="form-label">Correo electrónico</label><input class="form-input" id="regEmail" type="email" /></div>
-        <div class="form-row">
-          <div class="form-group"><label class="form-label">Contraseña</label><input class="form-input" id="regPass" type="password" /></div>
-          <div class="form-group"><label class="form-label">Confirmar</label><input class="form-input" id="regPass2" type="password" /></div>
-        </div>
-        <div id="regError" class="form-error hidden"></div>
-        <button class="btn btn-primary btn-block btn-lg" style="margin-top:8px" onclick="doRegister()">
-          Crear cuenta
-        </button>
-      </div>
+    <ul>
+        <li><a href="#funciones" class="nav-link">Funciones</a></li>
+        <li><a href="#modulos" class="nav-link">Módulos</a></li>
+        <li><a href="#como-funciona" class="nav-link">¿Cómo funciona?</a></li>
+        <li><a href="#equipo" class="nav-link">Equipo</a></li>
+    </ul>
+    <div class="nav-right">
+        <button id="btn-tema" class="btn-toggle-tema" title="Cambiar tema">☀️</button>
+        <a href="https://policodelabs-tech.github.io/Dynamic_Panels/" target="_blank" class="link-iniciar">Iniciar sesión</a>
+        <a href="#suscripciones" class="btn-nav-naranja">Planes</a>
     </div>
-  </div>
-</div>
+</nav>
 
-<div id="negociosScreen" class="hidden">
-  <header class="negocios-header">
-    <div class="negocios-logo">
-      <img id="negociosTopLogo" src="logo-v1.jpeg" alt="Dynamic Panels" style="max-height: 32px; border-radius: 4px;">
+<!-- ═══ HERO ═══ -->
+<header class="hero" id="inicio">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-orb"></div>
+    <div class="hero-content">
+        <div class="badge-policode reveal">
+            <span class="badge-dot"></span>
+            Respaldado por <img src="web-Logo-Policode-Labs-v1.svg" alt="Policode Labs" class="badge-policode-logo">
+        </div>
+        <h1 class="hero-title reveal" data-reveal-delay="100">
+            Gestión inteligente para<br>
+            <em>negocios que se mueven.</em>
+        </h1>
+        <p class="hero-subtitle reveal" data-reveal-delay="200">
+            Controla tu flota, pedidos, inventario y equipo desde un solo panel centralizado. Roles por persona, métricas en tiempo real y mapa de repartidores integrado.
+        </p>
+        <div class="hero-buttons reveal" data-reveal-delay="300">
+            <a href="https://policodelabs-tech.github.io/Dynamic_Panels/" target="_blank" class="btn-hero-primary">Acceder al panel</a>
+        </div>
     </div>
-    <div class="negocios-user">
-      <div>
-        <div class="negocios-user-name" id="negUserName">Cargando...</div>
-        <div class="negocios-user-email" id="negUserEmail"></div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Cerrar sesión</button>
+    <div class="hero-stats">
+        <div class="stat-item reveal" data-reveal-delay="0">
+            <div class="stat-num">7</div>
+            <div class="stat-label">Módulos de gestión</div>
+        </div>
+        <div class="stat-item reveal" data-reveal-delay="100">
+            <div class="stat-num">5</div>
+            <div class="stat-label">Roles de usuario</div>
+        </div>
+        <div class="stat-item reveal" data-reveal-delay="200">
+            <div class="stat-num">100%</div>
+            <div class="stat-label">Sin backend requerido</div>
+        </div>
+        <div class="stat-item reveal" data-reveal-delay="300">
+            <div class="stat-num">24/7</div>
+            <div class="stat-label">Datos en tiempo real</div>
+        </div>
     </div>
-  </header>
+</header>
 
-  <div class="negocios-content">
-    <h1 class="negocios-title">Mis Negocios</h1>
-    <p class="negocios-subtitle">Selecciona un negocio para entrar al panel de gestión</p>
+<!-- ═══ FUNCIONES PRINCIPALES ═══ -->
+<main class="content-sections" id="funciones">
 
-    <div class="negocios-actions">
-      <button class="btn btn-primary" onclick="openModal('modalCrearNegocio')">🏢 Crear negocio</button>
-      <button class="btn btn-ghost" onclick="openModal('modalUnirseNegocio')">🔗 Unirme con código</button>
+    <div class="section-eyebrow reveal">
+        <div class="eyebrow-chip">El sistema completo</div>
+        <h2 class="eyebrow-title">Todo lo que tu negocio necesita<br>en un solo lugar.</h2>
     </div>
 
-    <div class="negocios-grid" id="negociosGrid">
-      <div class="negocio-empty">
-        <div class="negocio-empty-icon">🏪</div>
-        <h3>Aún no tienes negocios</h3>
-        <p>Crea uno nuevo o únete con un código de invitación</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="appScreen" class="hidden">
-
-  <header class="top-navbar">
-    <div class="navbar-brand">
-      <img src="isologo.png" alt="Icono DP" style="max-height: 30px; object-fit: contain;" onerror="this.src='https://via.placeholder.com/30?text=DP'">
-    </div>
-
-    <div class="navbar-sep"></div>
-
-    <button class="navbar-biz" onclick="goToNegocios()" title="Cambiar negocio">
-      <img id="navBizLogoImg" src="" alt="Biz" style="width:20px;height:20px;border-radius:4px;object-fit:cover;display:none;">
-      <span class="navbar-biz-name" id="navBizName">Negocio</span> ▾
-    </button>
-
-    <nav class="navbar-menu" id="navMenu">
-      <button class="nav-item active" data-view="dashboard">📊 Dashboard</button>
-      <button class="nav-item" data-view="pedidos">📦 Pedidos <span class="nav-badge hidden" id="navBadgePedidos">0</span></button>
-      <button class="nav-item" data-view="flota">🗺️ Flota <span class="nav-live">●</span></button>
-      <button class="nav-item" data-view="personal">👥 Personal</button>
-      <button class="nav-item" data-view="inventario">🧱 Inventario</button>
-      <button class="nav-item" data-view="metricas">📈 Métricas</button>
-      <button class="nav-item" data-view="reportes">📑 Reportes</button>
-      <button class="nav-item" data-view="config">⚙️ Config</button>
-    </nav>
-
-    <div class="navbar-right">
-      <input class="search-box" type="text" placeholder="Buscar…" id="globalSearch" oninput="globalSearchFn()" />
-      <button class="icon-btn" onclick="toggleDark()" id="darkBtn" title="Modo oscuro">🌙</button>
-      <div class="profile-btn" onclick="openModal('modalProfile')">
-        <img id="navAvatarImg" src="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;display:none;">
-        <div class="profile-avatar" id="profileAvatarText">AD</div>
-        <div>
-          <div class="profile-name" id="profileName">Admin</div>
-          <div class="profile-role" id="profileRole">Administrador</div>
+    <!-- Dashboard -->
+    <section class="feature-showcase reveal">
+        <div class="feature-text">
+            <h3 class="feature-label">Vista General</h3>
+            <h2>Dashboard Central en Tiempo Real</h2>
+            <p>Una vista completa de tu operación al instante. KPIs, pedidos recientes, actividad del equipo y estado de tus repartidores, todo en una sola pantalla actualizada al momento.</p>
+            <ul class="feature-bullets">
+                <li><strong>KPIs automáticos:</strong> Total de pedidos, ventas del día, empleados activos y tasa de entregas.</li>
+                <li><strong>Pedidos recientes:</strong> Tabla con folio, cliente, repartidor asignado y estado.</li>
+                <li><strong>Actividad del equipo:</strong> Log de acciones en tiempo real de todo tu personal.</li>
+                <li><strong>Estado de flota:</strong> Repartidores disponibles vs en ruta, con su pedido activo.</li>
+            </ul>
         </div>
-      </div>
-    </div>
-  </header>
-
-  <main class="content-area">
-
-    <section class="view active" id="view-dashboard">
-      <div class="view-header">
-        <div>
-          <h1 class="view-title">Dashboard Central</h1>
-          <p class="view-subtitle" id="todayLabel"></p>
+        <div class="feature-visual">
+            <div class="feature-accent"></div>
+            <div class="mockup-frame img-placeholder" data-label="📊 Captura del Dashboard">
+                <!-- Aquí va: <img src="cap-dashboard.png" alt="Dashboard"> -->
+            </div>
         </div>
-      </div>
-
-      <div class="kpi-grid">
-        <div class="kpi-card rose">
-          <div class="kpi-header"><span class="kpi-label">Pedidos hoy</span><div class="kpi-icon rose">📦</div></div>
-          <div class="kpi-value" id="kpiPedidos">0</div>
-        </div>
-        <div class="kpi-card orange">
-          <div class="kpi-header"><span class="kpi-label">Ventas del día</span><div class="kpi-icon orange">💰</div></div>
-          <div class="kpi-value" id="kpiVentas">$0.00</div>
-        </div>
-        <div class="kpi-card blue">
-          <div class="kpi-header"><span class="kpi-label">Empleados activos</span><div class="kpi-icon blue">👥</div></div>
-          <div class="kpi-value" id="kpiEmpleados">0</div>
-        </div>
-        <div class="kpi-card green">
-          <div class="kpi-header"><span class="kpi-label">Tasa de entrega</span><div class="kpi-icon green">📈</div></div>
-          <div class="kpi-value" id="kpiTasa">—</div>
-        </div>
-      </div>
-
-      <div class="dash-grid">
-        <div class="card full mb">
-          <div class="card-header">
-            <span class="card-title">Pedidos Recientes</span>
-            <button class="btn btn-ghost btn-sm" onclick="switchView('pedidos')">Ver todos →</button>
-          </div>
-          <div class="card-body p0 dash-card-scroll" id="dashOrdersWrap"></div>
-        </div>
-
-        <div class="card mb">
-          <div class="card-header"><span class="card-title">Actividad Reciente</span></div>
-          <div class="card-body dash-card-scroll" id="dashActivity"></div>
-        </div>
-
-        <div class="card mb">
-          <div class="card-header">
-            <span class="card-title">Objetivos del Día</span>
-            <button class="btn btn-ghost btn-sm" id="btnNuevaTarea" onclick="openModal('modalNuevaTarea')">+ Nueva</button>
-          </div>
-          <div class="card-body dash-card-scroll" id="dashTasks"></div>
-        </div>
-
-        <div class="card mb">
-          <div class="card-header"><span class="card-title">Repartidores en Campo</span></div>
-          <div class="card-body p0" id="dashDrivers"></div>
-        </div>
-      </div>
     </section>
 
-    <section class="view" id="view-pedidos">
-      <div class="view-header">
-        <div><h1 class="view-title">Gestión de Pedidos</h1><p class="view-subtitle">Administra, asigna y rastrea todos los pedidos</p></div>
-        <div class="view-actions">
-          <button class="btn btn-primary" onclick="openModal('modalNuevoPedido')">＋ Nuevo Pedido</button>
+    <!-- Pedidos -->
+    <section class="feature-showcase reverse reveal">
+        <div class="feature-text">
+            <h3 class="feature-label">Módulo Pedidos</h3>
+            <h2>Gestión de Pedidos con Vista Kanban</h2>
+            <p>Crea, asigna y rastrea cada pedido desde que entra hasta que se entrega. Cambia entre vista de tabla y tablero Kanban según como prefieras trabajar.</p>
+            <ul class="feature-bullets">
+                <li><strong>Estados:</strong> Pendiente → En Ruta → Entregado → Cancelado.</li>
+                <li><strong>Asignación automática:</strong> El sistema asigna el repartidor disponible más cercano.</li>
+                <li><strong>Vista Kanban:</strong> Arrastra pedidos entre columnas para actualizar su estado.</li>
+                <li><strong>Folio único:</strong> Cada pedido recibe un código <code>#PD-XXXX</code> automáticamente.</li>
+                <li><strong>Búsqueda y filtros:</strong> Por cliente, folio o estado del pedido.</li>
+            </ul>
         </div>
-      </div>
-      <div class="filter-bar">
-        <input class="filter-input" type="text" id="searchOrders" placeholder="Buscar por folio o cliente…" oninput="renderOrders()" />
-        <select class="filter-select" id="filterStatus" onchange="renderOrders()">
-          <option value="">Todos los estados</option>
-          <option value="PENDIENTE">Pendiente</option>
-          <option value="EN_CAMINO">En Ruta</option>
-          <option value="ENTREGADO">Entregado</option>
-          <option value="CANCELADO">Cancelado</option>
-        </select>
-        <div class="view-toggle">
-          <button class="vt-btn active" id="btnTable" onclick="setOrderView('table')">TABLA</button>
-          <button class="vt-btn" id="btnBoard" onclick="setOrderView('board')">KANBAN</button>
+        <div class="feature-visual">
+            <div class="feature-accent"></div>
+            <div class="mockup-frame img-placeholder" data-label="📦 Captura del módulo Pedidos">
+                <!-- Aquí va: <img src="cap-pedidos.png" alt="Pedidos"> -->
+            </div>
         </div>
-      </div>
-      <div id="ordersTableView">
-        <div class="card"><div class="card-body p0" id="ordersTableWrap"></div></div>
-      </div>
-      <div id="ordersBoardView" class="hidden">
-        <div class="kanban-board" id="ordersKanban"></div>
-      </div>
     </section>
 
-    <section class="view" id="view-flota">
-      <div class="view-header">
-        <div><h1 class="view-title">Flota & Radar en Vivo</h1><p class="view-subtitle">Monitorea tus unidades en tiempo real</p></div>
-        <span class="live-chip">GPS Activo</span>
-      </div>
-      <div class="flota-layout">
-        <div class="card map-card">
-          <div id="leafletMap" style="height:100%;width:100%;z-index:1;border-radius:var(--radius-lg);"></div>
-          <div class="map-overlay-chip">GPS Activo</div>
+    <!-- Flota / Mapa -->
+    <section class="feature-showcase reveal">
+        <div class="feature-text">
+            <h3 class="feature-label">Módulo Flota</h3>
+            <h2>Mapa de Repartidores en Tiempo Real</h2>
+            <p>Visualiza dónde están tus repartidores en un mapa interactivo. Cada marcador muestra el nombre, estado y pedido activo del conductor.</p>
+            <ul class="feature-bullets">
+                <li><strong>Mapa integrado</strong> con OpenStreetMap, sin costo adicional.</li>
+                <li><strong>Posición en vivo:</strong> Los marcadores se actualizan automáticamente cada 4 segundos.</li>
+                <li><strong>Estado por color:</strong> Verde = disponible, gris = inactivo, color de equipo = en ruta.</li>
+                <li><strong>Base de operaciones</strong> marcada en el mapa para referencia visual.</li>
+                <li>Panel lateral con lista de repartidores y pedidos en curso.</li>
+            </ul>
         </div>
-        <div class="flota-sidebar">
-          <div class="card mb">
-            <div class="card-header">
-              <span class="card-title">Disponibles</span>
-              <span class="nav-badge" style="background:var(--green)" id="cntDisp">0</span>
+        <div class="feature-visual">
+            <div class="feature-accent"></div>
+            <div class="mockup-frame img-placeholder" data-label="🗺️ Captura del mapa de Flota">
+                <!-- Aquí va: <img src="cap-flota.png" alt="Flota"> -->
             </div>
-            <div class="card-body p0 fleet-list" id="listDisp"></div>
-          </div>
-          <div class="card mb">
-            <div class="card-header">
-              <span class="card-title">En Ruta</span>
-              <span class="nav-badge" style="background:var(--blue)" id="cntRuta">0</span>
-            </div>
-            <div class="card-body p0 fleet-list" id="listRuta"></div>
-          </div>
-          <div class="card">
-            <div class="card-header">
-              <span class="card-title">Inactivos</span>
-              <span class="nav-badge" style="background:var(--muted)" id="cntInact">0</span>
-            </div>
-            <div class="card-body p0 fleet-list" id="listInact"></div>
-          </div>
         </div>
-      </div>
     </section>
 
-    <section class="view" id="view-personal">
-      <div class="view-header">
-        <div><h1 class="view-title">Personal</h1><p class="view-subtitle">Gestiona tu equipo, roles y permisos</p></div>
-        <div class="view-actions">
-          <button class="btn btn-primary" id="btnNuevoEmp" onclick="openModal('modalNuevoEmpleado')">＋ Invitar / Agregar</button>
+    <!-- Personal -->
+    <section class="feature-showcase reverse reveal">
+        <div class="feature-text">
+            <h3 class="feature-label">Módulo Personal</h3>
+            <h2>Equipo, Roles y Tareas en un Solo Módulo</h2>
+            <p>Administra a todo tu equipo desde una sola pantalla con tres pestañas: empleados, tabla de permisos por rol y tablero de tareas.</p>
+            <ul class="feature-bullets">
+                <li><strong>Empleados:</strong> Cards con avatar, nombre, rol y sueldo. El admin puede editar o eliminar.</li>
+                <li><strong>Roles:</strong> Tabla visual de permisos — qué puede ver y hacer cada rol en el sistema.</li>
+                <li><strong>Tablero de tareas:</strong> Kanban de 3 columnas (Por hacer / En progreso / Terminado) con prioridad y asignación.</li>
+                <li><strong>Código de invitación:</strong> Genera un código <code>DIT-XXXX-XXXX</code> para que tus empleados se unan sin correo.</li>
+            </ul>
         </div>
-      </div>
-      <div class="personal-tabs">
-        <button class="pers-tab active" onclick="switchPersTab('empleados')">👥 Empleados</button>
-        <button class="pers-tab" onclick="switchPersTab('roles')">🔐 Roles y Permisos</button>
-        <button class="pers-tab" onclick="switchPersTab('tareas')">✅ Objetivos del Día</button>
-      </div>
-
-      <div id="persTabEmpleados">
-        <div class="filter-bar">
-          <input class="filter-input" type="text" id="searchEmp" placeholder="Buscar empleado…" oninput="renderEmployees()" />
-          <select class="filter-select" id="filterRol" onchange="renderEmployees()">
-            <option value="">Todos los roles</option>
-          </select>
+        <div class="feature-visual">
+            <div class="feature-accent"></div>
+            <div class="mockup-frame">
+                <img src="CP 1 DIN.png" alt="Módulo Personal">
+            </div>
         </div>
-        <div class="emp-grid" id="employeesGrid"></div>
-      </div>
-
-      <div id="persTabRoles" class="hidden">
-        <div class="card">
-          <div class="card-header"><span class="card-title">Matriz de Permisos</span></div>
-          <div class="card-body p0">
-            <table class="data-table">
-              <thead><tr><th>Rol</th><th>Pedidos</th><th>Empleados</th><th>Finanzas</th><th>Inventario</th><th>Métricas</th><th>Repartos</th><th>Config.</th></tr></thead>
-              <tbody id="rolesTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div id="persTabTareas" class="hidden">
-        <div class="view-actions" style="margin-bottom:16px">
-          <button class="btn btn-primary btn-sm" onclick="openModal('modalNuevaTarea')">＋ Nueva Tarea</button>
-        </div>
-        <div id="taskBoardWrap"></div>
-      </div>
     </section>
 
-    <section class="view" id="view-inventario">
-      <div class="view-header">
-        <div><h1 class="view-title">Inventario</h1><p class="view-subtitle">Control de stock y movimientos</p></div>
-        <div class="view-actions">
-          <button class="btn btn-ghost" onclick="openModal('modalEntradaMerc')">📥 Entrada de mercancía</button>
-          <button class="btn btn-primary" onclick="openModal('modalNuevoProducto')">＋ Nuevo Producto</button>
+    <!-- Inventario -->
+    <section class="feature-showcase reveal">
+        <div class="feature-text">
+            <h3 class="feature-label">Módulo Inventario</h3>
+            <h2>Control de Stock sin Mermas ni Sorpresas</h2>
+            <p>Registra productos, controla entradas de mercancía y recibe alertas automáticas cuando el stock baja del mínimo configurado.</p>
+            <ul class="feature-bullets">
+                <li><strong>Alertas de stock crítico:</strong> Aviso visual cuando un producto cae por debajo del mínimo.</li>
+                <li><strong>Entrada de mercancía:</strong> Registra proveedor, producto y cantidad en segundos.</li>
+                <li><strong>Descuento automático:</strong> Al marcar un pedido como entregado, el stock del producto se descuenta solo.</li>
+                <li>Categoría, unidad, precio unitario y stock mínimo por producto.</li>
+            </ul>
         </div>
-      </div>
-      <div class="inv-kpis">
-        <div class="inv-kpi"><div class="inv-kpi-label">Total productos</div><div class="inv-kpi-val" id="invTotal">0</div></div>
-        <div class="inv-kpi"><div class="inv-kpi-label">Stock crítico</div><div class="inv-kpi-val text-red" id="invCritico">0</div></div>
-        <div class="inv-kpi"><div class="inv-kpi-label">Valor total est.</div><div class="inv-kpi-val text-accent" id="invValor">$0</div></div>
-      </div>
-      <div class="card"><div class="card-body p0" id="inventoryWrap"></div></div>
+        <div class="feature-visual">
+            <div class="feature-accent"></div>
+            <div class="mockup-frame">
+                <img src="CAP 2 DIN.png" alt="Módulo Inventario">
+            </div>
+        </div>
     </section>
 
-    <section class="view" id="view-metricas">
-      <div class="view-header"><div><h1 class="view-title">Métricas</h1><p class="view-subtitle">Analiza el desempeño de tu negocio</p></div></div>
-      <div class="metrics-grid">
-        <div class="card">
-          <div class="card-header"><span class="card-title">Pedidos por Estado</span></div>
-          <div class="chart-wrap" id="statusChartWrap" style="min-height:200px"></div>
+    <!-- Métricas y Reportes -->
+    <section class="feature-showcase reverse reveal">
+        <div class="feature-text">
+            <h3 class="feature-label">Métricas y Reportes</h3>
+            <h2>Datos que se Convierten en Decisiones</h2>
+            <p>El módulo de métricas analiza tu operación completa y el módulo de reportes te permite exportar y visualizar el desempeño histórico de tu negocio.</p>
+            <ul class="feature-bullets">
+                <li>Volumen de pedidos por estado y tendencias de ventas.</li>
+                <li>Rendimiento individual por repartidor y por turno.</li>
+                <li>Productos más vendidos y niveles de inventario históricos.</li>
+                <li>Nómina estimada por rol y costo operativo total.</li>
+                <li>Reportes exportables con resumen de la operación.</li>
+            </ul>
         </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Tiempo Prom. Entrega</span></div>
-          <div class="card-body">
-            <div class="big-stat" id="avgTimeVal">—</div>
-            <div class="big-stat-unit" id="avgTimeUnit"></div>
-            <div class="big-stat-note" id="avgTimeNote">Sin entregas completadas</div>
-          </div>
+        <div class="feature-visual">
+            <div class="feature-accent"></div>
+            <div class="mockup-frame">
+                <img src="CAP3 DIN.png" alt="Métricas y Reportes">
+            </div>
         </div>
-      </div>
-      <div class="metrics-row">
-        <div class="card">
-          <div class="card-header"><span class="card-title">Pedidos por Día (sem.)</span></div>
-          <div class="chart-wrap" id="weekChartWrap" style="min-height:160px"></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Empleados por Rol</span></div>
-          <div class="chart-wrap" id="rolesChartWrap" style="min-height:160px"></div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">Stock Crítico</span></div>
-          <div class="chart-wrap" id="stockChartWrap" style="min-height:160px"></div>
-        </div>
-      </div>
     </section>
 
-    <section class="view" id="view-reportes">
-      <div class="view-header"><div><h1 class="view-title">Reportes</h1><p class="view-subtitle">Genera y descarga informes operativos</p></div></div>
-      <div class="reports-grid">
-        <div class="report-card">
-          <div class="rc-icon">📦</div>
-          <div class="rc-title">Reporte de Pedidos</div>
-          <div class="rc-desc">Historial completo con estados, tiempos de entrega y repartidores.</div>
-          <button class="btn btn-ghost btn-sm" onclick="exportCSV('pedidos')">↓ Exportar CSV</button>
-        </div>
-        <div class="report-card">
-          <div class="rc-icon">💰</div>
-          <div class="rc-title">Reporte Financiero</div>
-          <div class="rc-desc">Ventas por día, semana y mes. Totales y promedios.</div>
-          <button class="btn btn-ghost btn-sm" onclick="exportCSV('ventas')">↓ Exportar CSV</button>
-        </div>
-        <div class="report-card">
-          <div class="rc-icon">👥</div>
-          <div class="rc-title">Reporte de Personal</div>
-          <div class="rc-desc">Lista completa de empleados, roles, estatus y datos de contacto.</div>
-          <button class="btn btn-ghost btn-sm" onclick="exportCSV('personal')">↓ Exportar CSV</button>
-        </div>
-        <div class="report-card">
-          <div class="rc-icon">🛵</div>
-          <div class="rc-title">Reporte de Entregas</div>
-          <div class="rc-desc">Tiempos, rutas y eficiencia por repartidor.</div>
-          <button class="btn btn-ghost btn-sm" onclick="exportCSV('entregas')">↓ Exportar CSV</button>
-        </div>
-        <div class="report-card">
-          <div class="rc-icon">🧱</div>
-          <div class="rc-title">Reporte de Inventario</div>
-          <div class="rc-desc">Stock actual, entradas y productos en nivel crítico.</div>
-          <button class="btn btn-ghost btn-sm" onclick="exportCSV('inventario')">↓ Exportar CSV</button>
-        </div>
-        <div class="report-card">
-          <div class="rc-icon">🖨️</div>
-          <div class="rc-title">Imprimir Dashboard</div>
-          <div class="rc-desc">Snapshot del estado actual del sistema listo para impresión.</div>
-          <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Imprimir</button>
-        </div>
-      </div>
-    </section>
+</main>
 
-    <section class="view" id="view-config">
-      <div class="view-header">
-        <div><h1 class="view-title">Configuración</h1><p class="view-subtitle">Personaliza tu experiencia y ajustes del sistema</p></div>
-        <button class="btn btn-primary" onclick="saveConfig()">Guardar cambios</button>
-      </div>
-      <div class="config-grid">
-        <div class="card mb">
-          <div class="card-header"><span class="card-title">Perfil de usuario</span></div>
-          <div class="card-body">
-            <div class="form-row">
-              <div class="form-group"><label class="form-label">Nombre(s)</label><input class="form-input" id="cfgNombre" /></div>
-              <div class="form-group"><label class="form-label">Apellidos</label><input class="form-input" id="cfgApellidos" /></div>
+<!-- ═══ ROLES ═══ -->
+<section class="roles-section" id="modulos">
+    <div class="roles-inner">
+        <div class="section-eyebrow reveal" style="margin-bottom:64px">
+            <div class="eyebrow-chip">Roles del Sistema</div>
+            <h2 class="eyebrow-title">Cada persona, su módulo.<br>Sin acceso a lo que no le toca.</h2>
+        </div>
+        <div class="roles-grid">
+
+            <div class="role-card reveal" data-reveal-delay="0" style="--role-color: #A6094C">
+                <div class="role-icon-wrap">
+                    <div class="role-dot" style="background:#A6094C"></div>
+                    <span class="role-emoji">👑</span>
+                </div>
+                <h3 class="role-name">Administrador</h3>
+                <p class="role-desc">Acceso total al sistema. Gestiona negocios, empleados, pedidos, inventario, métricas, reportes y configuración.</p>
+                <ul class="role-perms">
+                    <li>✓ Pedidos completos</li>
+                    <li>✓ Personal y roles</li>
+                    <li>✓ Inventario y finanzas</li>
+                    <li>✓ Métricas y reportes</li>
+                    <li>✓ Configuración del negocio</li>
+                </ul>
             </div>
-            <div class="form-group"><label class="form-label">Foto de perfil</label><input class="form-input" type="file" id="cfgAvatar" accept="image/*" /></div>
-            <div class="form-row">
-              <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="cfgTel" /></div>
-              <div class="form-group"><label class="form-label">Biografía</label><input class="form-input" id="cfgBio" placeholder="Ej. Senior Dev" /></div>
+
+            <div class="role-card reveal" data-reveal-delay="80" style="--role-color: #FF8B00">
+                <div class="role-icon-wrap">
+                    <div class="role-dot" style="background:#FF8B00"></div>
+                    <span class="role-emoji">🔍</span>
+                </div>
+                <h3 class="role-name">Supervisor</h3>
+                <p class="role-desc">Visibilidad amplia de la operación. Gestiona pedidos, ve métricas y tiene acceso parcial al personal.</p>
+                <ul class="role-perms">
+                    <li>✓ Pedidos completos</li>
+                    <li>½ Personal (sin eliminar)</li>
+                    <li>✓ Finanzas e inventario</li>
+                    <li>✓ Métricas y repartos</li>
+                    <li>— Sin acceso a Config</li>
+                </ul>
             </div>
-          </div>
-        </div>
 
-        <div class="card mb">
-          <div class="card-header"><span class="card-title">Apariencia</span></div>
-          <div class="card-body">
-            <div class="toggle-row">
-              <div><div class="toggle-label">Modo oscuro</div><div class="toggle-sub">Activa el tema oscuro para reducir fatiga visual</div></div>
-              <label class="toggle-switch"><input type="checkbox" id="toggleDarkCfg" onchange="toggleDark()" /><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            <div class="role-card reveal" data-reveal-delay="160" style="--role-color: #00875A">
+                <div class="role-icon-wrap">
+                    <div class="role-dot" style="background:#00875A"></div>
+                    <span class="role-emoji">🛒</span>
+                </div>
+                <h3 class="role-name">Cajero</h3>
+                <p class="role-desc">Enfocado en punto de venta. Registra pedidos y tiene acceso básico a inventario y finanzas.</p>
+                <ul class="role-perms">
+                    <li>✓ Crear y ver pedidos</li>
+                    <li>½ Finanzas (solo ventas)</li>
+                    <li>½ Inventario (solo consulta)</li>
+                    <li>— Sin acceso a personal</li>
+                    <li>— Sin métricas ni config</li>
+                </ul>
             </div>
-            <div class="toggle-row">
-              <div><div class="toggle-label">Notificaciones sonoras</div><div class="toggle-sub">Reproducir sonido al recibir pedidos</div></div>
-              <label class="toggle-switch"><input type="checkbox" id="toggleSound" /><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+
+            <div class="role-card reveal" data-reveal-delay="240" style="--role-color: #0052CC">
+                <div class="role-icon-wrap">
+                    <div class="role-dot" style="background:#0052CC"></div>
+                    <span class="role-emoji">🛵</span>
+                </div>
+                <h3 class="role-name">Repartidor</h3>
+                <p class="role-desc">Acceso móvil a sus pedidos asignados. Actualiza el estado de cada entrega desde el campo.</p>
+                <ul class="role-perms">
+                    <li>½ Solo sus pedidos asignados</li>
+                    <li>✓ Módulo de repartos</li>
+                    <li>— Sin inventario</li>
+                    <li>— Sin finanzas</li>
+                    <li>— Sin personal ni config</li>
+                </ul>
             </div>
-          </div>
-        </div>
 
-        <div class="card mb full" id="configBizCard">
-          <div class="card-header"><span class="card-title">Datos del negocio (Solo Admin)</span></div>
-          <div class="card-body">
-            <div class="form-row">
-              <div class="form-group"><label class="form-label">Nombre del negocio</label><input class="form-input" id="cfgBizName" /></div>
-              <div class="form-group"><label class="form-label">Logo del negocio</label><input class="form-input" type="file" id="cfgBizLogo" accept="image/*" /></div>
+            <div class="role-card reveal" data-reveal-delay="320" style="--role-color: #6554C0">
+                <div class="role-icon-wrap">
+                    <div class="role-dot" style="background:#6554C0"></div>
+                    <span class="role-emoji">📦</span>
+                </div>
+                <h3 class="role-name">Almacenista</h3>
+                <p class="role-desc">Control total del inventario. Registra entradas de mercancía, ajusta stock y monitorea niveles críticos.</p>
+                <ul class="role-perms">
+                    <li>✓ Inventario completo</li>
+                    <li>½ Métricas de stock</li>
+                    <li>— Sin pedidos ni personal</li>
+                    <li>— Sin finanzas</li>
+                    <li>— Sin config del negocio</li>
+                </ul>
             </div>
-            <div class="form-row">
-              <div class="form-group"><label class="form-label">Correo principal</label><input class="form-input" id="cfgBizEmail" type="email" /></div>
-              <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="cfgBizTel" /></div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ═══ CÓMO FUNCIONA ═══ -->
+<section class="how-section" id="como-funciona">
+    <div class="how-inner">
+        <div class="section-eyebrow reveal" style="margin-bottom:64px">
+            <div class="eyebrow-chip">Proceso</div>
+            <h2 class="eyebrow-title">De cero a operando<br>en tres pasos.</h2>
+        </div>
+        <div class="how-steps">
+            <div class="how-step reveal" data-reveal-delay="0">
+                <div class="step-num">01</div>
+                <div class="step-icon">🏢</div>
+                <h3 class="step-title">Crea tu negocio</h3>
+                <p class="step-desc">Regístrate, da de alta tu negocio con nombre, logo y datos de contacto. Puedes administrar hasta 5 negocios distintos desde una sola cuenta.</p>
             </div>
-          </div>
+            <div class="how-connector"></div>
+            <div class="how-step reveal" data-reveal-delay="150">
+                <div class="step-num">02</div>
+                <div class="step-icon">👥</div>
+                <h3 class="step-title">Invita a tu equipo</h3>
+                <p class="step-desc">Genera un código de invitación <strong>DIT-XXXX-XXXX</strong> y compártelo con tus empleados. Ellos se unen y tú les asignas el rol: Cajero, Repartidor, Almacenista, Supervisor o Admin.</p>
+            </div>
+            <div class="how-connector"></div>
+            <div class="how-step reveal" data-reveal-delay="300">
+                <div class="step-num">03</div>
+                <div class="step-icon">📊</div>
+                <h3 class="step-title">Opera y visualiza todo</h3>
+                <p class="step-desc">Cada persona trabaja en su módulo. Tú ves el dashboard con pedidos en tiempo real, repartidores en el mapa y métricas actualizadas al instante.</p>
+            </div>
         </div>
+    </div>
+</section>
 
-        <div class="card mb full">
-          <div class="card-header"><span class="card-title">Zona de peligro</span></div>
-          <div class="card-body">
-            <button class="btn btn-danger btn-sm" onclick="if(confirm('¿Seguro que deseas reiniciar los datos locales? Esto borrará toda tu información de prueba.')) clearLocalData()">Borrar todos los datos locales y salir</button>
-          </div>
+<!-- ═══ AVANCES DE LA WEB ═══ -->
+<section class="screenshots-section" id="avances">
+    <div class="screenshots-inner">
+        <div class="section-eyebrow reveal" style="margin-bottom:64px">
+            <div class="eyebrow-chip">Avances del sistema</div>
+            <h2 class="eyebrow-title">El panel en construcción.<br><em>Míralo crecer.</em></h2>
+            <p class="eyebrow-sub">Estas capturas se irán actualizando conforme avance el desarrollo.</p>
         </div>
-      </div>
-    </section>
+        <div class="screenshots-grid">
 
-  </main>
-</div>
+            <div class="screenshot-card wide reveal">
+                <div class="screenshot-thumb img-placeholder" data-label="🖥️ Vista completa del Dashboard"></div>
+                <div class="screenshot-caption">
+                    <span class="sc-tag">Dashboard</span>
+                    <h4>Panel de control principal</h4>
+                    <p>KPIs, pedidos recientes, actividad del equipo y mapa de flota en una sola vista.</p>
+                </div>
+            </div>
 
-<div class="modal-backdrop hidden" id="modalCrearNegocio">
-  <div class="modal">
-    <div class="modal-header"><h3 class="modal-title">Crear Negocio</h3><button class="modal-close" onclick="closeModal('modalCrearNegocio')">✕</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label class="form-label">Nombre del negocio *</label><input class="form-input" id="cnNombre" placeholder="Mi Empresa SA de CV" /></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Correo Electrónico *</label><input class="form-input" id="cnCorreo" type="email" placeholder="contacto@empresa.com" /></div>
-        <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="cnTelefono" type="tel" /></div>
-      </div>
-      <div class="form-group"><label class="form-label">Dirección</label><input class="form-input" id="cnDireccion" /></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Ciudad</label><input class="form-input" id="cnCiudad" placeholder="Ciudad de México" /></div>
-        <div class="form-group"><label class="form-label">Logo del Negocio</label><input class="form-input" type="file" id="cnLogo" accept="image/*" /></div>
-      </div>
-      <div id="cnError" class="form-error hidden"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modalCrearNegocio')">Cancelar</button>
-      <button class="btn btn-primary" onclick="submitCrearNegocio()">Crear negocio</button>
-    </div>
-  </div>
-</div>
+            <div class="screenshot-card reveal" data-reveal-delay="0">
+                <div class="screenshot-thumb img-placeholder" data-label="📦 Módulo Pedidos — vista Kanban"></div>
+                <div class="screenshot-caption">
+                    <span class="sc-tag">Pedidos</span>
+                    <h4>Tablero Kanban</h4>
+                    <p>Pendiente → En Ruta → Entregado → Cancelado.</p>
+                </div>
+            </div>
 
-<div class="modal-backdrop hidden" id="modalUnirseNegocio">
-  <div class="modal modal-sm">
-    <div class="modal-header"><h3 class="modal-title">Unirse con código</h3><button class="modal-close" onclick="closeModal('modalUnirseNegocio')">✕</button></div>
-    <div class="modal-body">
-      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Ingresa el código de invitación que te proporcionó el administrador del negocio.</p>
-      <div class="form-group"><label class="form-label">Código de invitación</label>
-        <input class="form-input" id="unirCodigo" placeholder="DIT-XXXX-XXXX" style="text-align:center;font-size:18px;font-weight:800;letter-spacing:2px;" />
-      </div>
-      <div id="unirError" class="form-error hidden"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modalUnirseNegocio')">Cancelar</button>
-      <button class="btn btn-primary" onclick="submitUnirseNegocio()">Unirme</button>
-    </div>
-  </div>
-</div>
+            <div class="screenshot-card reveal" data-reveal-delay="100">
+                <div class="screenshot-thumb img-placeholder" data-label="🗺️ Mapa de Flota en vivo"></div>
+                <div class="screenshot-caption">
+                    <span class="sc-tag">Flota</span>
+                    <h4>Repartidores en tiempo real</h4>
+                    <p>Posición actualizada cada 4 segundos con estado de cada conductor.</p>
+                </div>
+            </div>
 
-<div class="modal-backdrop hidden" id="modalNuevoPedido">
-  <div class="modal">
-    <div class="modal-header"><h3 class="modal-title">Nuevo Pedido</h3><button class="modal-close" onclick="closeModal('modalNuevoPedido')">✕</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label class="form-label">Nombre del Cliente *</label><input class="form-input" id="npCliente" placeholder="Juan García" /></div>
-      <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="npTelefono" type="tel" placeholder="55-XXXX-XXXX" /></div>
-      <div class="form-group"><label class="form-label">Dirección de entrega *</label><input class="form-input" id="npDireccion" placeholder="Calle, Número, Colonia, Ciudad" /></div>
-      <div class="form-group"><label class="form-label">Descripción del pedido *</label><textarea class="form-input" id="npDescripcion" placeholder="Detalla los productos o servicios del pedido…"></textarea></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Total ($)</label><input class="form-input" id="npTotal" type="number" min="0" step="0.01" placeholder="0.00" /></div>
-        <div class="form-group"><label class="form-label">Productos del inventario</label>
-          <select class="form-input" id="npProducto">
-            <option value="">Sin producto</option>
-          </select>
+            <div class="screenshot-card reveal" data-reveal-delay="200">
+                <div class="screenshot-thumb img-placeholder" data-label="👥 Módulo Personal — empleados y roles"></div>
+                <div class="screenshot-caption">
+                    <span class="sc-tag">Personal</span>
+                    <h4>Gestión de equipo</h4>
+                    <p>Cards de empleados, tabla de permisos y tablero de tareas.</p>
+                </div>
+            </div>
+
+            <div class="screenshot-card reveal" data-reveal-delay="300">
+                <div class="screenshot-thumb img-placeholder" data-label="🧱 Módulo Inventario"></div>
+                <div class="screenshot-caption">
+                    <span class="sc-tag">Inventario</span>
+                    <h4>Control de stock</h4>
+                    <p>Alertas de stock crítico y registro de entradas de mercancía.</p>
+                </div>
+            </div>
+
+            <div class="screenshot-card reveal" data-reveal-delay="400">
+                <div class="screenshot-thumb img-placeholder" data-label="📈 Módulo Métricas"></div>
+                <div class="screenshot-caption">
+                    <span class="sc-tag">Métricas</span>
+                    <h4>Análisis de la operación</h4>
+                    <p>Ventas, rendimiento por repartidor y costo de nómina estimado.</p>
+                </div>
+            </div>
+
         </div>
-      </div>
-      <p style="font-size:12px;color:var(--blue);margin-top:-8px;margin-bottom:8px">🤖 El sistema asignará automáticamente al repartidor disponible.</p>
-      <div id="npError" class="form-error hidden"></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modalNuevoPedido')">Cancelar</button>
-      <button class="btn btn-primary" onclick="submitNuevoPedido()">Crear pedido</button>
-    </div>
-  </div>
-</div>
+</section>
 
-<div class="modal-backdrop hidden" id="modalEditPedido">
-  <div class="modal modal-sm">
-    <div class="modal-header"><h3 class="modal-title">Pedido <span id="editFolioLabel" style="color:var(--primary)"></span></h3><button class="modal-close" onclick="closeModal('modalEditPedido')">✕</button></div>
-    <div class="modal-body">
-      <input type="hidden" id="editPedidoId" />
-      <div class="form-group"><label class="form-label">Estado</label>
-        <select class="form-input" id="editEstatus">
-          <option value="PENDIENTE">⏳ Pendiente</option>
-          <option value="EN_CAMINO">🛵 En Ruta</option>
-          <option value="ENTREGADO">✅ Entregado</option>
-          <option value="CANCELADO">❌ Cancelado</option>
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">Repartidor asignado</label>
-        <select class="form-input" id="editRepartidor"><option value="">Auto-asignado</option></select>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modalEditPedido')">Cancelar</button>
-      <button class="btn btn-primary" onclick="submitEditPedido()">Guardar</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-backdrop hidden" id="modalNuevoEmpleado">
-  <div class="modal">
-    <div class="modal-header"><h3 class="modal-title">Invitar / Agregar Personal</h3><button class="modal-close" onclick="closeModal('modalNuevoEmpleado')">✕</button></div>
-    <div class="modal-body">
-      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Asigna los permisos iniciales. Podrás generar un código para que la persona se una a tu negocio.</p>
-      
-      <div class="form-group"><label class="form-label">Correo electrónico (Opcional)</label><input class="form-input" id="neCorreo" type="email" placeholder="Para envío directo" /></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Sueldo mensual ($)</label><input class="form-input" id="neSueldo" type="number" /></div>
-        <div class="form-group"><label class="form-label">Rol *</label>
-          <select class="form-input" id="neRol">
-            <option value="ADMINISTRADOR">Administrador</option>
-            <option value="SUPERVISOR">Supervisor</option>
-            <option value="CAJERO">Cajero</option>
-            <option value="REPARTIDOR" selected>Repartidor</option>
-            <option value="ALMACENISTA">Almacenista</option>
-          </select>
+<!-- ═══ POR QUÉ DYNAMIC PANELS ═══ -->
+<section class="why-section">
+    <div class="why-inner">
+        <div class="why-left reveal">
+            <div class="eyebrow-chip" style="margin-bottom:20px">¿Por qué nosotros?</div>
+            <h2 class="why-title">Sin servidores.<br>Sin instalaciones.<br><em>Sin complicaciones.</em></h2>
+            <p class="why-desc">Dynamic Panels corre 100% en el navegador con almacenamiento local. Sin costos de infraestructura ni configuraciones técnicas. Entras, creas tu negocio y empiezas a operar el mismo día.</p>
+            <a href="#suscripciones" class="btn-why-cta">Ver planes →</a>
         </div>
-      </div>
-      
-      <div id="neInviteArea" class="hidden" style="margin-top:16px;background:var(--surface2);padding:16px;border-radius:var(--radius);text-align:center;">
-        <span style="font-size:12px;color:var(--muted);display:block;margin-bottom:8px">Comparte este código con la persona:</span>
-        <strong id="neCodeDisplay" style="font-size:24px;letter-spacing:3px;color:var(--primary)"></strong>
-      </div>
-      <div id="neError" class="form-error hidden"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modalNuevoEmpleado')">Cerrar</button>
-      <button class="btn btn-secondary" onclick="generateEmpleadoCode()">Generar Código</button>
-      <button class="btn btn-primary" onclick="submitNuevoEmpleado()">Guardar Empleado</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-backdrop hidden" id="modalEditEmpleado">
-  <div class="modal modal-sm">
-    <div class="modal-header"><h3 class="modal-title">Modificar Empleado</h3><button class="modal-close" onclick="closeModal('modalEditEmpleado')">✕</button></div>
-    <div class="modal-body">
-      <input type="hidden" id="editEmpId">
-      <p style="font-size:13px; font-weight:700; margin-bottom:16px;" id="editEmpName"></p>
-      <div class="form-group"><label class="form-label">Nuevo Rol</label>
-        <select class="form-input" id="editEmpRol">
-            <option value="ADMINISTRADOR">Administrador</option>
-            <option value="SUPERVISOR">Supervisor</option>
-            <option value="CAJERO">Cajero</option>
-            <option value="REPARTIDOR">Repartidor</option>
-            <option value="ALMACENISTA">Almacenista</option>
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">Sueldo mensual ($)</label><input class="form-input" id="editEmpSueldo" type="number" /></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modalEditEmpleado')">Cancelar</button>
-      <button class="btn btn-primary" onclick="submitEditEmpleado()">Guardar cambios</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-backdrop hidden" id="modalNuevaTarea">
-  <div class="modal modal-sm">
-    <div class="modal-header"><h3 class="modal-title">Nueva Tarea</h3><button class="modal-close" onclick="closeModal('modalNuevaTarea')">✕</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label class="form-label">Título *</label><input class="form-input" id="ntTitulo" /></div>
-      <div class="form-group"><label class="form-label">Descripción</label><textarea class="form-input" id="ntDesc"></textarea></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Prioridad</label>
-          <select class="form-input" id="ntPrioridad">
-            <option value="baja">🟢 Baja</option>
-            <option value="media" selected>🟡 Media</option>
-            <option value="alta">🔴 Alta</option>
-          </select>
+        <div class="why-right">
+            <div class="why-item reveal" data-reveal-delay="0">
+                <div class="why-icon">⚡</div>
+                <div>
+                    <h4>100% sin backend</h4>
+                    <p>Toda la lógica corre en el navegador con localStorage. Sin servidores propios, sin configurar nada, sin costos de hosting inicial.</p>
+                </div>
+            </div>
+            <div class="why-item reveal" data-reveal-delay="100">
+                <div class="why-icon">🔒</div>
+                <div>
+                    <h4>Permisos granulares por rol</h4>
+                    <p>Cada empleado ve exactamente lo que su rol permite. El sistema oculta automáticamente las secciones y acciones no autorizadas.</p>
+                </div>
+            </div>
+            <div class="why-item reveal" data-reveal-delay="200">
+                <div class="why-icon">🗺️</div>
+                <div>
+                    <h4>Mapa de flota incluido</h4>
+                    <p>OpenStreetMap integrado sin costo. Visualiza tus repartidores en tiempo real y rastrea cada entrega en el mapa.</p>
+                </div>
+            </div>
+            <div class="why-item reveal" data-reveal-delay="300">
+                <div class="why-icon">🏢</div>
+                <div>
+                    <h4>Múltiples negocios, una cuenta</h4>
+                    <p>Crea hasta 5 negocios independientes desde una sola cuenta. Cada uno con su propio equipo, inventario y datos.</p>
+                </div>
+            </div>
         </div>
-        <div class="form-group"><label class="form-label">Asignar a</label>
-          <select class="form-input" id="ntAsignado"><option value="">Sin asignar</option></select>
+    </div>
+</section>
+
+<!-- ═══ EQUIPO ═══ -->
+<section class="team-section" id="equipo">
+    <div class="team-inner">
+        <div class="section-eyebrow reveal" style="margin-bottom:64px">
+            <div class="eyebrow-chip">Policode Labs</div>
+            <h2 class="eyebrow-title">El equipo detrás<br>de <em>Dynamic Panels.</em></h2>
+            <p class="eyebrow-sub">Estudiantes de ingeniería creando soluciones reales para negocios reales.</p>
         </div>
-      </div>
-      <div id="ntError" class="form-error hidden"></div>
+        <div class="team-grid">
+            <div class="team-card reveal" data-reveal-delay="0">
+                <div class="team-avatar">AG</div>
+                <h3 class="team-name">Abraham Gutiérrez</h3>
+                <span class="team-role">Líder del Proyecto · Backend</span>
+                <p class="team-bio">Arquitectura del sistema, lógica de negocio y persistencia de datos. Responsable del flujo principal de la aplicación.</p>
+            </div>
+            <div class="team-card reveal" data-reveal-delay="100">
+                <div class="team-avatar">MV</div>
+                <h3 class="team-name">María Valentina Islas</h3>
+                <span class="team-role">Diseño UX · Frontend</span>
+                <p class="team-bio">Experiencia de usuario e identidad visual. Diseño de interfaces para cada módulo y sistema de roles.</p>
+            </div>
+            <div class="team-card reveal" data-reveal-delay="200">
+                <div class="team-avatar">AM</div>
+                <h3 class="team-name">Alexander Modesto</h3>
+                <span class="team-role">Frontend · Integraciones</span>
+                <p class="team-bio">Desarrollo de componentes interactivos, integración del mapa Leaflet y vistas Kanban del sistema.</p>
+            </div>
+            <div class="team-card reveal" data-reveal-delay="300">
+                <div class="team-avatar">SM</div>
+                <h3 class="team-name">Sebastián Moreno</h3>
+                <span class="team-role">Frontend · Lógica de datos</span>
+                <p class="team-bio">Módulos de métricas, reportes y gestión del estado global de la aplicación con localStorage.</p>
+            </div>
+        </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modalNuevaTarea')">Cancelar</button>
-      <button class="btn btn-primary" onclick="submitNuevaTarea()">Crear tarea</button>
+</section>
+
+<!-- ═══ PRICING ═══ -->
+<section id="suscripciones" class="pricing-section">
+    <div class="pricing-header reveal">
+        <div class="eyebrow-chip">Planes</div>
+        <h2>Elige el plan<br>perfecto para ti</h2>
+        <p>Escala tu operación con Dynamic Panels. Sin contratos forzosos.</p>
     </div>
-  </div>
+    <div class="pricing-cards">
+        <div class="pricing-card reveal" data-reveal-delay="0">
+            <div class="plan-name">Crecimiento +</div>
+            <div class="plan-price"><sup>$</sup>499</div>
+            <div class="plan-period">MXN / mes</div>
+            <div class="plan-divider"></div>
+            <ul class="plan-features">
+                <li>Personaliza tu negocio con logo y datos</li>
+                <li>Hasta 3 negocios en una cuenta</li>
+                <li>Hasta 10 empleados por negocio</li>
+                <li>Todos los módulos incluidos</li>
+                <li>Gestión con IA básica</li>
+            </ul>
+            <a href="https://policodelabs-tech.github.io/Dynamic_Panels/" target="_blank" class="btn-plan">Elegir Plan</a>
+        </div>
+        <div class="pricing-card popular reveal" data-reveal-delay="120">
+            <div class="badge-popular">Más Elegido</div>
+            <div class="plan-name">Crecimiento PRO</div>
+            <div class="plan-price"><sup>$</sup>899</div>
+            <div class="plan-period">MXN / mes</div>
+            <div class="plan-divider"></div>
+            <ul class="plan-features">
+                <li>Personaliza tu negocio con logo y datos</li>
+                <li>Hasta 5 negocios en una cuenta</li>
+                <li>Hasta 20 empleados por negocio</li>
+                <li>Todos los módulos incluidos</li>
+                <li>Gestión con IA avanzada</li>
+            </ul>
+            <a href="https://policodelabs-tech.github.io/Dynamic_Panels/" target="_blank" class="btn-plan primary">Elegir Plan</a>
+        </div>
+        <div class="pricing-card reveal" data-reveal-delay="240">
+            <div class="plan-name">Gestión Labs</div>
+            <div class="plan-price"><sup>$</sup>1,118</div>
+            <div class="plan-period">MXN / mes</div>
+            <div class="plan-promo">¡20% de descuento incluido!</div>
+            <div class="plan-divider"></div>
+            <ul class="plan-features">
+                <li><strong style="color:var(--txt1)">Dynamic Panels</strong> Crecimiento PRO</li>
+                <li><strong style="color:var(--txt1)">Delivery In-Transit</strong> Transit PRO</li>
+                <li>Gestión completa + logística de repartos</li>
+            </ul>
+            <a href="https://policodelabs-tech.github.io/Dynamic_Panels/" target="_blank" class="btn-plan">Elegir Plan</a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section class="faq-section" id="faq">
+    <div class="faq-inner">
+        <div class="section-eyebrow reveal" style="margin-bottom:56px">
+            <div class="eyebrow-chip">FAQ</div>
+            <h2 class="eyebrow-title">Preguntas frecuentes.</h2>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item reveal">
+                <button class="faq-q">¿Necesito un servidor o hosting para usar Dynamic Panels? <span class="faq-icon">+</span></button>
+                <div class="faq-a"><p>No. Dynamic Panels funciona 100% en el navegador usando localStorage para guardar los datos. No necesitas backend, servidor ni configuración técnica. Solo abres el sistema y empiezas a operar.</p></div>
+            </div>
+            <div class="faq-item reveal">
+                <button class="faq-q">¿Cómo se unen mis empleados al sistema? <span class="faq-icon">+</span></button>
+                <div class="faq-a"><p>Desde el módulo Personal, el administrador genera un código de invitación con formato <strong>DIT-XXXX-XXXX</strong>. El empleado entra al sistema, selecciona "Unirme con código" y lo ingresa. Tú le asignas su rol desde el panel.</p></div>
+            </div>
+            <div class="faq-item reveal">
+                <button class="faq-q">¿Qué pasa si un repartidor no tiene acceso a partes del sistema? <span class="faq-icon">+</span></button>
+                <div class="faq-a"><p>El sistema oculta automáticamente los módulos que el rol no tiene permitidos. Un Repartidor solo ve sus pedidos asignados. Un Almacenista solo accede al inventario. Los permisos están definidos a nivel de sistema.</p></div>
+            </div>
+            <div class="faq-item reveal">
+                <button class="faq-q">¿El mapa de flota tiene costo adicional? <span class="faq-icon">+</span></button>
+                <div class="faq-a"><p>No. El mapa usa OpenStreetMap que es completamente gratuito y de código abierto. No hay API de pago ni límites de uso para visualizar la flota de repartidores.</p></div>
+            </div>
+            <div class="faq-item reveal">
+                <button class="faq-q">¿Puedo administrar varios negocios desde una sola cuenta? <span class="faq-icon">+</span></button>
+                <div class="faq-a"><p>Sí. Dependiendo de tu plan puedes tener entre 3 y 5 negocios distintos. Cada negocio tiene su propio equipo, inventario, pedidos y datos completamente separados.</p></div>
+            </div>
+            <div class="faq-item reveal">
+                <button class="faq-q">¿Qué incluye el plan Gestión Labs? <span class="faq-icon">+</span></button>
+                <div class="faq-a"><p>Gestión Labs combina <strong>Dynamic Panels Crecimiento PRO</strong> + <strong>Delivery In-Transit Transit PRO</strong> con un 20% de descuento. Es la solución completa para negocios que manejan tanto la operación interna como la logística de repartos.</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <div class="footer-logos-stack">
+                    <img src="web-Logo-Policode-Labs-v2.svg" alt="Policode Labs" class="footer-logo-company">
+                    <div class="footer-logos-separator"></div>
+                    <img src="web-Logo-Dynamic-Panels-v2.svg" alt="Dynamic Panels" class="footer-logo" id="footer-logo-dp">
+                </div>
+                <p class="footer-tagline">Gestión operativa inteligente<br>para negocios en crecimiento.</p>
+                <div class="footer-social">
+                    <a href="https://github.com/policodelabs-tech" target="_blank" class="social-link" title="GitHub">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    </a>
+                    <a href="mailto:policodelabs@gmail.com" class="social-link" title="policodelabs@gmail.com">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-col-title">Sistema</h4>
+                <ul class="footer-links">
+                    <li><a href="#funciones">Dashboard</a></li>
+                    <li><a href="#funciones">Módulo Pedidos</a></li>
+                    <li><a href="#funciones">Módulo Flota</a></li>
+                    <li><a href="#funciones">Módulo Personal</a></li>
+                    <li><a href="#funciones">Módulo Inventario</a></li>
+                    <li><a href="#funciones">Métricas y Reportes</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-col-title">Empresa</h4>
+                <ul class="footer-links">
+                    <li><a href="#equipo">El equipo</a></li>
+                    <li><a href="https://policodelabs-tech.github.io/Policodelabs/" target="_blank">Policode Labs</a></li>
+                    <li><a href="https://policodelabs-tech.github.io/Delivery_In-Transit_web/" target="_blank">Delivery In-Transit</a></li>
+                    <li><a href="#avances">Avances del sistema</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-col-title">Soporte</h4>
+                <ul class="footer-links">
+                    <li><a href="#faq">Preguntas frecuentes</a></li>
+                    <li><a href="mailto:policodelabs@gmail.com">policodelabs@gmail.com</a></li>
+                    <li><a href="#suscripciones">Planes y precios</a></li>
+                </ul>
+                <div class="footer-badge">
+                    <span class="footer-badge-dot"></span>
+                    Sistema en desarrollo activo
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Policode Labs. Todos los derechos reservados.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Términos de uso</a>
+                <a href="#">Privacidad</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ═══ CHATBOT ═══ -->
+<div class="chatbot-wrapper">
+    <button id="chatbot-toggle" class="btn-chatbot-toggle">💬</button>
+    <div id="chatbot-window" class="chatbot-window">
+        <div class="chat-header">
+            <div class="chat-title-group">
+                <span class="status-dot"></span>
+                <h4>Asistente Dynamic</h4>
+            </div>
+            <button id="close-chat" class="btn-close-chat">&times;</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="mensaje mensaje-bot">¡Hola! Soy el asistente de Dynamic Panels. Puedo ayudarte con info sobre módulos, roles, planes o el equipo. ¿En qué te ayudo?</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="chat-input" placeholder="Escribe tu pregunta..." autocomplete="off">
+            <button id="btn-enviar-msg">&#10148;</button>
+        </div>
+    </div>
 </div>
 
-<div class="modal-backdrop hidden" id="modalNuevoProducto">
-  <div class="modal">
-    <div class="modal-header"><h3 class="modal-title">Nuevo Producto</h3><button class="modal-close" onclick="closeModal('modalNuevoProducto')">✕</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label class="form-label">Nombre *</label><input class="form-input" id="prodNombre" /></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Categoría</label><input class="form-input" id="prodCategoria" placeholder="General" /></div>
-        <div class="form-group"><label class="form-label">Unidad</label><input class="form-input" id="prodUnidad" placeholder="pieza" /></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Stock inicial</label><input class="form-input" id="prodStock" type="number" min="0" value="0" /></div>
-        <div class="form-group"><label class="form-label">Stock mínimo</label><input class="form-input" id="prodMinimo" type="number" min="0" value="0" /></div>
-      </div>
-      <div class="form-group"><label class="form-label">Precio unitario ($)</label><input class="form-input" id="prodPrecio" type="number" min="0" step="0.01" placeholder="0.00" /></div>
-      <div id="prodError" class="form-error hidden"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modalNuevoProducto')">Cancelar</button>
-      <button class="btn btn-primary" onclick="submitNuevoProducto()">Agregar producto</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-backdrop hidden" id="modalEntradaMerc">
-  <div class="modal modal-sm">
-    <div class="modal-header"><h3 class="modal-title">📥 Entrada de Mercancía</h3><button class="modal-close" onclick="closeModal('modalEntradaMerc')">✕</button></div>
-    <div class="modal-body">
-      <div class="form-group"><label class="form-label">Producto *</label>
-        <select class="form-input" id="emProducto"><option value="">Seleccionar…</option></select>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Cantidad a ingresar *</label><input class="form-input" id="emCantidad" type="number" min="1" value="1" /></div>
-        <div class="form-group"><label class="form-label">Proveedor</label><input class="form-input" id="emProveedor" placeholder="Nombre del proveedor" /></div>
-      </div>
-      <div id="emError" class="form-error hidden"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modalEntradaMerc')">Cancelar</button>
-      <button class="btn btn-primary" onclick="submitEntradaMerc()">Registrar entrada</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-backdrop hidden" id="modalProfile">
-  <div class="modal modal-sm">
-    <div class="modal-header"><h3 class="modal-title">Mi Perfil</h3><button class="modal-close" onclick="closeModal('modalProfile')">✕</button></div>
-    <div class="modal-body">
-      <div style="text-align:center;margin-bottom:20px">
-        <img id="profileAvatarBig" src="" style="width:72px;height:72px;border-radius:50%;object-fit:cover;display:none;margin:0 auto 12px;">
-        <div class="profile-avatar" id="profileAvatarTextBig" style="width:72px;height:72px;font-size:28px;margin:0 auto 12px"></div>
-        <div style="font-size:18px;font-weight:800" id="profileFullName">Admin</div>
-        <div style="font-size:13px;color:var(--muted)" id="profileEmail">admin@empresa.com</div>
-        <div style="font-size:12px;color:var(--primary);margin-top:6px;font-weight:600" id="profileBio"></div>
-      </div>
-      <div class="divider"></div>
-      <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
-        <div style="display:flex;justify-content:space-between"><span class="text-muted">Teléfono</span><span id="profileTelTxt" style="font-weight:700"></span></div>
-        <div style="display:flex;justify-content:space-between"><span class="text-muted">Rol</span><span id="profileRolFull" style="font-weight:700"></span></div>
-        <div style="display:flex;justify-content:space-between"><span class="text-muted">Negocio</span><span id="profileBizFull" style="font-weight:700"></span></div>
-      </div>
-      <button class="btn btn-ghost btn-block btn-sm" style="margin-top:20px" onclick="closeModal('modalProfile'); switchView('config')">✏️ Editar Perfil</button>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-danger btn-sm" onclick="doLogout()">Cerrar sesión</button>
-    </div>
-  </div>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
